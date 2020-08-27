@@ -35,7 +35,7 @@ export default new Router({
         },
         {
           path:'/user',
-          component:()=>import('../views/user.vue'),
+          component:()=>import('../views/user/index.vue'),
           meta:{
             name:'管理员列表'
           }

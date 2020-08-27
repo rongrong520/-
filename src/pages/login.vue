@@ -1,33 +1,34 @@
 <template>
   <div class="wrap">
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="login">
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="ruleForm.name" clearable></el-input>
+    <el-form :model="loginFrom" :rules="rules" ref="loginFrom" label-width="100px" class="login">
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="loginFrom.username" clearable></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input v-model="ruleForm.pass" clearable show-password></el-input>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="loginFrom.password" clearable show-password></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="login('ruleForm')">Login</el-button>
+        <el-button type="primary" @click="login('loginFrom')">Login</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import {getLogin} from '../util'
 export default {
   data() {
     return {
-      ruleForm: {
-        name: "",
-        pass:""
+      loginFrom: {
+        username: "",
+        password:""
       },
       rules: {
-        name: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" },
+          { min: 2, max: 5, message: "长度在 2 到 15 个字符", trigger: "blur" },
         ],
-        pass: [
+        password: [
           { required: true, message: "请输入密码", trigger: "blur" },
           {
             min: 6,
@@ -43,11 +44,14 @@ export default {
     login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.ruleForm.name == "憨憨" && this.ruleForm.pass == "123456") {
-            this.$router.push("/index");
-          } else {
-            this.$message.error("用户名或密码错误");
-          }
+          getLogin(this.loginFrom)
+          .then(res=>{
+              if(res.code===200){
+                this.$router.push('/index')
+              }else{
+                 this.$message.error(res.msg);
+              }
+          });
         } else {
           console.log("error submit!!");
           return false;
