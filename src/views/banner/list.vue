@@ -1,39 +1,36 @@
 <template>
   <div>
-    <el-table
-      :data="get_MenuList"
-      border
-      row-key="id"
-      default-expand-all
-      :tree-props="{children: 'children'}"
-    >
-      >
-      <el-table-column prop="id" label="菜单编号" width="180"></el-table-column>
-      <el-table-column prop="title" label="菜单名称" width="180"></el-table-column>
-      <el-table-column prop="pid" label="上级菜单" width="180"></el-table-column>
-      <el-table-column prop="icon" label="菜单图标" width="180"></el-table-column>
-      <el-table-column prop="url" label="菜单地址" width="180"></el-table-column>
-      <el-table-column prop="status" label="状态" width="180">
+    <el-table :data="get_BannerList" border>
+      <el-table-column prop="id" label="轮播图编号" width="180"></el-table-column>
+      <el-table-column prop="title" label="轮播图标题" width="180"></el-table-column>
+      <el-table-column prop="img" label="图片" width="180">
+        <template slot-scope="item">
+          <div>
+            <img class="uploadimg" :src="item.row.img? uploadHttp+item.row.img : ''" />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" >
         <template slot-scope="item">
           <!-- 状态是需要去判断的，而不是去写数字 -->
           <el-tag v-if="item.row.status ==1" type="success">正常</el-tag>
           <el-tag v-else type="danger">禁用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作">
+      <el-table-column fixed="right" label="操作" :label-width="formLabelWidth">
         <template slot-scope="item">
           <el-button
-            @click="edit(item.row.id)"
             type="primary"
+            @click="update(item.row.id)"
             icon="el-icon-edit"
             size="small"
             circle
           ></el-button>
           <el-button
-            @click="del(item.row.id)"
             type="danger"
             icon="el-icon-delete"
             size="small"
+            @click="del(item.row.id)"
             circle
           ></el-button>
         </template>
@@ -44,29 +41,31 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import { getMenuList, getMenuDel } from "../../util";
+//调用接口
+import { getBannerDel} from "../../util";
 export default {
   data() {
-    return {};
+    return {
+      formLabelWidth: "120px",
+    };
   },
   mounted() {
-    //页面一加载就获取菜单列表
-    this.getMenuListAction();
+    //页面一加载调取
+    this.getBannerListAction();
   },
   computed: {
-    ...mapGetters(["get_MenuList"]),
+    ...mapGetters(["get_BannerList"]),
   },
   methods: {
-    //获取菜单列表
-    ...mapActions(["getMenuListAction"]),
-    //获取当前数据的id
-    edit(id) {
-      this.$emit("edit", {
-        isAdd: false,
+    ...mapActions(["getBannerListAction"]),
+    //点击编辑按钮传id
+    update(id) {
+      this.$emit("update", {
         id,
+        isAdd: false,
       });
     },
-    //删除事件
+    //删除数据
     del(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -74,15 +73,14 @@ export default {
         type: "warning",
       })
         .then(() => {
-          //调取删除接口
-          getMenuDel({ id }).then((res) => {
+          getBannerDel({ id }).then((res) => {
             if (res.code === 200) {
               this.$message({
                 type: "success",
                 message: res.msg,
               });
-              //重新调取列表
-              this.getMenuListAction();
+              //重新调取列表接口
+              this.getBannerListAction();
             } else {
               this.$message.error(res.msg);
             }
@@ -100,4 +98,11 @@ export default {
 </script>
 
 <style lang="" scoped>
+.el-pagination {
+  float: right;
+  margin: 16px 0;
+}
+.uploadimg{
+  width: 200px;
+}
 </style>

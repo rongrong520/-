@@ -1,16 +1,17 @@
 <template>
-  <div>
-    <router-view></router-view>
+  <div id="app">
+    <router-view/>
   </div>
 </template>
 
 <script>
-import login from './pages/login'
-import index from './pages/index'
+// import login from './pages/login'
+// import index from './pages/index'
 export default {
     components:{
-      login,
-      index
+       name: 'App'
+      // login,
+      // index
     }
 }
 </script>

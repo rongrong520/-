@@ -5,8 +5,6 @@ import App from './App'
 import router from './router'
 import store from './store'
 import './assets/css/reset.css'
-Vue.config.productionTip = false
-
 
 //全局引入阿秀
 import axios from 'axios'
@@ -16,7 +14,12 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 //调用element-ui
 Vue.use(ElementUI)
+
 Vue.prototype.axios = axios
+//原型链上需要加uploadHttp,上传到本地
+Vue.prototype.uploadHttp = "http://localhost:3000"
+
+Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

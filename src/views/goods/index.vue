@@ -1,0 +1,57 @@
+<template>
+  <div>
+    <elbread></elbread>
+    <el-button type="primary" plain size="mini" @click="open">添加</el-button>
+    <!-- 表格渲染 -->
+    <elgoods ref="elgoods" @update="update"></elgoods>
+    <!-- 弹框渲染 -->
+    <vadd ref="vadd" :isShow="son" @close="close"></vadd>
+  </div>
+</template>
+
+<script>
+//引入面包屑
+import elbread from "../../components/elbread";
+import elgoods from "./list";
+import vadd from "./add";
+export default {
+  data() {
+    return {
+      son: {
+        isAdd: true,
+        dialogshow: false, //控制对话框的显示隐藏
+      },
+    };
+  },
+  components: {
+    elbread,
+    elgoods,
+    vadd,
+  },
+  
+  methods: {
+    //打开弹框
+    open() {
+      this.son.isAdd = true;
+      this.son.dialogshow = true;
+      this.son.getCount = this.$refs.elgoods.getCount;
+    },
+    //关闭弹框
+    close(e) {
+      this.son.dialogshow = e;
+    },
+    update(e) {
+      this.son.isAdd = e.isAdd;
+      this.son.dialogshow = true;
+      this.$refs.vadd.update(e.id,e.changePage);
+    },
+  },
+};
+</script>
+
+<style lang="" scoped>
+.el-button {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+</style>

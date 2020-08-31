@@ -20,7 +20,7 @@
             <i class="el-icon-s-grid"></i>
         <span slot="title">首页</span>
         </el-menu-item>
-          <el-submenu index="2" v-for="item in get_MenuList" :key="item.id">
+          <el-submenu :index="item.id.toString()" v-for="item in navList" :key="item.id">
             <template slot="title">
               <i :class="item.icon"></i>
               <span>{{item.title}}</span>
@@ -41,16 +41,17 @@ export default {
   data() {
     return {
       defaultactive: "/home",
-      // navList:[]
+      navList:[]
     };
   },
   computed: {
-    ...mapGetters(['get_MenuList'])
+    // ...mapGetters(['get_MenuList'])
   },
   mounted() {
     this.defaultactive = this.$route.path;
     // 组件一加载就调取菜单列表接口
-    this.getMenuListAction()
+    this.navList = sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')).menus : []
+    // this.getMenuListAction()
     // getMenuList({
     //   istree:1
     // })
@@ -63,7 +64,7 @@ export default {
     
   },
   methods: {
-    ...mapActions(['getMenuListAction'])
+    // ...mapActions(['getMenuListAction'])
   },
 };
 </script>

@@ -26,11 +26,27 @@
           <el-radio v-model="menuform.type" :label="1">目录</el-radio>
           <el-radio v-model="menuform.type" :label="2">菜单</el-radio>
         </el-form-item>
-        <el-form-item v-if="menuform.type==1" label="菜单图标">
-          <el-input v-model="menuform.icon" autocomplete="off"></el-input>
+        <el-form-item v-if="menuform.type==1" prop='icon' label="菜单图标">
+          <el-select v-model="menuform.icon" placeholder="请选择">
+            <el-option value disabled>--请选择--</el-option>
+            <el-option
+              v-for="item in icons"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="menuform.type==2" label="菜单地址">
-          <el-input v-model="menuform.url" autocomplete="off"></el-input>
+          <el-select v-model="menuform.url" placeholder="请选择">
+            <el-option value disabled>--请选择--</el-option>
+            <el-option
+              v-for="item in routeurl"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-switch v-model="menuform.status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
@@ -46,14 +62,30 @@
 </template>
 
 <script>
-import {mapGetters,mapActions} from 'vuex'
-import {getMenuAdd,getMenuInfo,getMenuEdit} from '../../util'
+import { mapGetters, mapActions } from "vuex";
+import { getMenuAdd, getMenuInfo, getMenuEdit } from "../../util";
 export default {
-    props:['isShow'],
- data() {
- return {
-     editid: 0, //编辑删除用
-     menuform: {
+  props: ["isShow"],
+  data() {
+    return {
+      icons:[
+        'el-icon-setting',
+        'el-icon-star-off',
+      ],
+      routeurl:[
+        '/home',
+        '/menu',
+        '/role',
+        '/user',
+        '/cate',
+        '/spec',
+        '/goods',
+        '/member',
+        '/banner',
+        '/seck'
+      ],
+      editid: 0, //编辑删除用
+      menuform: {
         title: "", //菜单名称
         pid: 0, //上级菜单
         type: 1,
@@ -64,36 +96,34 @@ export default {
       rules: {
         title: [
           { required: true, message: "请输入菜单名称", trigger: "blur" },
-          { min: 3, max: 9, message: "长度在 3 到 9 个字符", trigger:  "blur" },
+          { min: 3, max: 9, message: "长度在 3 到 9 个字符", trigger: "blur" },
         ],
         pid: [{ required: true, message: "请选择上级菜单", trigger: "change" }],
       },
- };
- },
-  computed: {
-    ...mapGetters(['get_MenuList'])
+    };
   },
- methods: {
-     
-     //编辑事件
+  computed: {
+    ...mapGetters(["get_MenuList"]),
+  },
+  methods: {
+    //编辑事件
     update(id) {
-        this.editid = id
+      this.editid = id;
       //更改isAdd的状态
-      
+
       this.isShow.isAdd = false;
       getMenuInfo({ id }).then((res) => {
         if (res.code == 200) {
           this.menuform = res.list;
-          this.menuform.type = res.list.type.toString()
-          this.menuform.status = this.menuform.status===1 ?true:false
-               
+      //this.menuform.type = res.list.type.toString();
+          this.menuform.status = this.menuform.status === 1 ? true : false;
         }
       });
     },
-     
-     //调取行动
-     ...mapActions(['getMenuListAction']),
-     reset() {
+
+    //调取行动
+    ...mapActions(["getMenuListAction"]),
+    reset() {
       this.menuform = {
         title: "",
         pid: 0,
@@ -102,7 +132,9 @@ export default {
         status: true,
         icon: "",
       };
-      this.$emit('close',false)
+      //取消表单验证信息
+     this.$refs['ruleForm'].clearValidate(this.rules)
+      this.$emit("close", false);
     },
     //添加表单事件
     add(formName) {
@@ -111,34 +143,35 @@ export default {
           // this.menuform.status = this.menuform.status ? 1:2
           //利用深拷贝，开辟一个新的空间，切断之前的联系，不会出现双向数据绑定
           let data = JSON.parse(JSON.stringify(this.menuform));
+          data.type = Number(data.type);
+          console.log(data.type);
           data.status = data.status ? 1 : 2;
           // data.type
           if (this.isShow.isAdd) {
             //调取接口
             getMenuAdd(data).then((res) => {
-              console.log(res, "添加结果");
+              // console.log(res, "添加结果");
               if (res.code === 200) {
                 this.$message.success(res.msg);
                 //关闭弹框并清空
                 this.reset();
                 //重新调取列表
-                this.getMenuListAction()
+                this.getMenuListAction();
               }
             });
           } else {
             //必填项id从上面找变量接受
             data.id = this.editid;
-            console.log(this.menuform.id);
             console.log(data);
             //调取接口
             getMenuEdit(data).then((res) => {
-            //   console.log(res, "添加结果");
+              // console.log(res, "添加结果");
               if (res.code === 200) {
                 this.$message.success(res.msg);
                 //关闭弹框并清空
                 this.reset();
                 //重新调取列表
-                this.getMenuListAction()
+                this.getMenuListAction();
               }
             });
           }
@@ -148,7 +181,7 @@ export default {
         }
       });
     },
- },
+  },
 };
 </script>
 

@@ -6,6 +6,11 @@ let http = axios.create({
 
 //拦截器请求拦截
 http.interceptors.request.use((req)=>{
+    //获取本地存储中的token
+    let authorization = ''
+    //console.log(JSON.parse(sessionStorage.getItem('userInfo')),'who')
+    authorization = sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')).token :''
+    req.headers.authorization = authorization
     return req
 })
 //拦截器请求响应

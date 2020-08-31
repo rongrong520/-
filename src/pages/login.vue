@@ -1,6 +1,10 @@
 <template>
   <div class="wrap">
-    <el-form :model="loginFrom" :rules="rules" ref="loginFrom" label-width="100px" class="login">
+    <el-form :model="loginFrom" 
+    :rules="rules"
+     ref="ruleForm"
+     label-width="100px"
+      class="login">
       <el-form-item label="用户名" prop="username">
         <el-input v-model="loginFrom.username" clearable></el-input>
       </el-form-item>
@@ -8,7 +12,7 @@
         <el-input v-model="loginFrom.password" clearable show-password></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="login('loginFrom')">Login</el-button>
+        <el-button type="primary" @click="login('ruleForm')">Login</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -47,19 +51,17 @@ export default {
           getLogin(this.loginFrom)
           .then(res=>{
               if(res.code===200){
+                sessionStorage.setItem('userInfo',JSON.stringify(res.list))
                 this.$router.push('/index')
               }else{
                  this.$message.error(res.msg);
               }
-          });
+          })
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     },
   },
 };
